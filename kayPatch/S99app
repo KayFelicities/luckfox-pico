@@ -1,0 +1,27 @@
+#!/bin/bash
+
+DAEMON="/etc/app.sh"
+
+case "$1" in
+start)
+    echo -n "Starting app..."
+    if [ -e $DAEMON ]; then
+        chmod +x $DAEMON && $DAEMON &
+    else
+        echo "$DAEMON NOT FOUND"
+    fi
+    echo "done"
+    ;;
+stop)
+    echo -n "Stopping app..."
+    killall `basename $DAEMON`
+    echo "done"
+    ;;
+restart | reload) ;;
+*)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+    ;;
+esac
+
+exit $?
