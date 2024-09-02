@@ -11,11 +11,12 @@ MODULE_DIR=/userdata/modules
 # modules
 insmod $MODULE_DIR/soft_uart.ko
 
-
-# start apps
-chmod +x $APP_DIR/lcd && $APP_DIR/lcd >/dev/null &
-chmod +x $APP_DIR/reader && $APP_DIR/reader >/dev/null &
-
+# watchdog
+checkApps() {
+    if ! pidof $1 >/dev/null; then
+        chmod +x $APP_DIR/$1 && $APP_DIR/$1 >/dev/null &
+    fi
+}
 
 # daemon
 hookQuit() {
@@ -27,5 +28,7 @@ trap 'hookQuit' INT QUIT TERM
 
 # wait
 while true; do
-    sleep 1
+    checkApps lcd
+    checkApps reader
+    sleep 5
 done

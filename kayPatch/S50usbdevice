@@ -32,7 +32,7 @@ USB_CONFIGS_DIR=${USB_CONFIGFS_DIR}/configs/${USB_SKELETON}
 UMS_BLOCK=/userdata/ums_shared.img
 UMS_BLOCK_SIZE=1024 #unit M
 UMS_BLOCK_TYPE=fat
-UMS_BLOCK_AUTO_MOUNT=off
+UMS_BLOCK_AUTO_MOUNT=on
 UMS_BLOCK_MOUNT_DIR=/userdata/share
 UMS_RO=0
 
@@ -346,10 +346,9 @@ bind_functions() {
 		fi
 		mkdir ${UMS_BLOCK_MOUNT_DIR} -p
 		if [ $UMS_BLOCK_AUTO_MOUNT = on ]; then
-			mount ${UMS_BLOCK} ${UMS_BLOCK_MOUNT_DIR}
-		else
-			echo ${UMS_BLOCK} >${USB_FUNCTIONS_DIR}/mass_storage.0/lun.0/file
+			mount -o utf8=1 ${UMS_BLOCK} ${UMS_BLOCK_MOUNT_DIR}
 		fi
+		echo ${UMS_BLOCK} >${USB_FUNCTIONS_DIR}/mass_storage.0/lun.0/file
 		syslink_function mass_storage.0
 	fi
 
