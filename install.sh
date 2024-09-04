@@ -27,3 +27,5 @@ cp -a kayPatch/soft_uart.ko output/out/userdata/modules/
 ./build.sh firmware && cp output/image/userdata.img output/image/rootfs.img /mnt/d/hardware/luckfoxPico/images/
 
 mv IMAGE/* /mnt/d/hardware/luckfoxPico/images/
+
+./backupBuildroot.sh
