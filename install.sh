@@ -21,6 +21,13 @@ mkdir -p output/out/userdata/apps/
 cp -a kayPatch/lcd output/out/userdata/apps/
 cp -a kayPatch/reader output/out/userdata/apps/
 
+UMS_BLOCK=output/out/userdata/ums_shared.img
+UMS_BLOCK_SIZE=1024 #unit M
+UMS_BLOCK_TYPE=fat
+dd if=/dev/zero of=${UMS_BLOCK} bs=1M count=${UMS_BLOCK_SIZE}
+mkfs.${UMS_BLOCK_TYPE} ${UMS_BLOCK}
+
+
 mkdir -p output/out/userdata/modules/
 cp -a kayPatch/soft_uart.ko output/out/userdata/modules/
 
@@ -28,4 +35,4 @@ cp -a kayPatch/soft_uart.ko output/out/userdata/modules/
 
 mv IMAGE/* /mnt/d/hardware/luckfoxPico/images/
 
-./backupBuildroot.sh
+./backupConfigs.sh
