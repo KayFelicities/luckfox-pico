@@ -12,6 +12,9 @@ cp -a kayPatch/S99app output/out/rootfs_uclibc_rv1106/etc/init.d/
 cp -a kayPatch/S50usbdevice output/out/rootfs_uclibc_rv1106/etc/init.d/
 chmod +x output/out/rootfs_uclibc_rv1106/etc/init.d/*
 
+mkdir -p output/out/rootfs_uclibc_rv1106/etc/dhcp/
+cp -a kayPatch/dhcpd.conf output/out/rootfs_uclibc_rv1106/etc/dhcp/dhcpd.conf
+
 cp -a kayPatch/app.sh output/out/rootfs_uclibc_rv1106/etc/
 
 cp -a kayPatch/libguiFont.so output/out/rootfs_uclibc_rv1106/lib/
@@ -34,5 +37,3 @@ cp -a kayPatch/soft_uart.ko output/out/userdata/modules/
 ./build.sh firmware && cp output/image/userdata.img output/image/rootfs.img /mnt/d/hardware/luckfoxPico/images/
 
 mv IMAGE/* /mnt/d/hardware/luckfoxPico/images/
-
-./backupConfigs.sh
