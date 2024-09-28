@@ -12,6 +12,35 @@
 / {
 	model = "Luckfox Pico Mini A";
 	compatible = "rockchip,rv1103g-38x38-ipc-v10", "rockchip,rv1103";
+
+    gpio4pa3:gpio4pa3 {
+        compatible = "regulator-fixed";
+        pinctrl-names = "default";
+        pinctrl-0 = <&gpio4_pa3>;
+        regulator-name = "gpio4_pa3";
+        regulator-always-on;
+    };  
+    gpio4pa2:gpio4pa2 {
+        compatible = "regulator-fixed";
+        pinctrl-names = "default";
+        pinctrl-0 = <&gpio4_pa2>;
+        regulator-name = "gpio4_pa2";
+        regulator-always-on;
+    };  
+};
+
+/**********GPIO**********/
+&pinctrl {
+    gpio4-pa3 {
+        gpio4_pa3:gpio4-pa3 {
+            rockchip,pins = <4 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
+    	};
+	};
+    gpio4-pa2 {
+        gpio4_pa2:gpio4-pa2 {
+            rockchip,pins = <4 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
+    	};
+	};
 };
 
 /**********SDMMC**********/
