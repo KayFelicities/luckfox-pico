@@ -95,6 +95,12 @@
 	status = "okay";
 };
 
+/* UART5_M2 */
+&uart5 {
+	status = "okay";
+	pinctrl-0 = <&uart5m2_xfer>;
+};
+
 /**********PWM**********/
 /* PWM1_M0 */
 &pwm1 {
