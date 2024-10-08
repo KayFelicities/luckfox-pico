@@ -1,6 +1,7 @@
 #! /bin/bash
 
 ROOTFS=output/out/rootfs_uclibc_rv1106
+USERDATAFS=output/out/userdata
 
 # init.d
 # rm -f $ROOTFS/etc/init.d/S21appinit  # 这个删除还会重新生成
@@ -11,32 +12,15 @@ rm -f $ROOTFS/etc/init.d/S99hciinit
 rm -f $ROOTFS/etc/init.d/S99luckfoxconfigload
 rm -f $ROOTFS/etc/init.d/S99python
 rm -f $ROOTFS/etc/init.d/S99rtcinit
-cp -a kayPatch/S99app $ROOTFS/etc/init.d/
-cp -a kayPatch/S50usbdevice $ROOTFS/etc/init.d/
+
+# patch rootfs
+cp -a kayPatch/rootfs/* $ROOTFS
 chmod +x $ROOTFS/etc/init.d/*
 
-# dhcpd
-mkdir -p $ROOTFS/etc/dhcp/
-cp -a kayPatch/dhcpd.conf $ROOTFS/etc/dhcp/dhcpd.conf
+# patch userdata
+cp -a kayPatch/userdata/* $USERDATAFS
 
-# mosquitto
-mkdir -p $ROOTFS/etc/mosquitto/
-cp -a kayPatch/mosquitto.conf $ROOTFS/etc/mosquitto/mosquitto.conf
-
-# app
-cp -a kayPatch/app.sh $ROOTFS/etc/
-
-cp -a kayPatch/libguiFont.so $ROOTFS/lib/
-cp -a kayPatch/libcurl.so.4 $ROOTFS/lib/
-
-mkdir -p output/out/userdata/apps/
-cp -a kayPatch/lcd output/out/userdata/apps/
-cp -a kayPatch/reader output/out/userdata/apps/
-
-mkdir -p output/out/userdata/modules/
-cp -a kayPatch/soft_uart.ko output/out/userdata/modules/
-
-# usb gadget
+# create usb gadget image
 UMS_BLOCK=output/out/userdata/ums_shared.img
 UMS_BLOCK_SIZE=1024 #unit M
 UMS_BLOCK_TYPE=fat
