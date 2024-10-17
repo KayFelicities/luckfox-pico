@@ -12,7 +12,7 @@ if [ -e /etc/init.d/S21appinit ]; then
 fi
 
 # modules
-insmod $MODULE_DIR/soft_uart.ko
+insmod $MODULE_DIR/uartIR.ko
 
 # watchdog
 checkApps() {
