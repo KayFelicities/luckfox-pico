@@ -2062,10 +2062,10 @@ function build_firmware() {
 		rm -rf $RK_PROJECT_PACKAGE_ROOTFS_DIR/oem/*
 		mkdir -p $RK_PROJECT_PACKAGE_ROOTFS_DIR/oem
 		build_mkimg $GLOBAL_OEM_NAME $RK_PROJECT_PACKAGE_OEM_DIR
-	else
-		mkdir -p $RK_PROJECT_PACKAGE_ROOTFS_DIR/oem
-		__COPY_FILES $RK_PROJECT_PACKAGE_OEM_DIR $RK_PROJECT_PACKAGE_ROOTFS_DIR/oem
-		rm -rf $RK_PROJECT_PACKAGE_OEM_DIR
+	# else
+	# 	mkdir -p $RK_PROJECT_PACKAGE_ROOTFS_DIR/oem
+	# 	__COPY_FILES $RK_PROJECT_PACKAGE_OEM_DIR $RK_PROJECT_PACKAGE_ROOTFS_DIR/oem
+	# 	rm -rf $RK_PROJECT_PACKAGE_OEM_DIR
 	fi
 
 	__RUN_POST_BUILD_SCRIPT
@@ -2093,7 +2093,8 @@ function build_firmware() {
 	# Spi_nand mklink
 	if [ "${RK_BOOT_MEDIUM}" == "spi_nand" ]; then
 		msg_info "MEDIUM SPI_NAND relink Image"
-		files=("${RK_PROJECT_OUTPUT_IMAGE}/oem.img"
+		files=(
+			# "${RK_PROJECT_OUTPUT_IMAGE}/oem.img"
 			"${RK_PROJECT_OUTPUT_IMAGE}/rootfs.img"
 			"${RK_PROJECT_OUTPUT_IMAGE}/userdata.img")
 		for file in "${files[@]}"; do
