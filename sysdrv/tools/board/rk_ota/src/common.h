@@ -17,6 +17,8 @@
 #ifndef RECOVERY_COMMON_H
 #define RECOVERY_COMMON_H
 
+#define DEBUG
+
 #include <stdio.h>
 #include <stdbool.h>
 

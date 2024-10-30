@@ -13,6 +13,8 @@
 #include <console.h>
 #include <version.h>
 
+extern int lcd_init(void);
+
 DECLARE_GLOBAL_DATA_PTR;
 
 /*
@@ -59,6 +61,7 @@ void main_loop(void)
 	update_tftp(0UL, NULL, NULL);
 #endif /* CONFIG_UPDATE_TFTP */
 
+	lcd_init();
 	s = bootdelay_process();
 	if (cli_process_fdt(&s))
 		cli_secure_boot_cmd(s);

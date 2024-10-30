@@ -5,3 +5,4 @@
 #
 
 obj-y	+= evb_rv1106.o
+obj-y	+= lcd_init.o

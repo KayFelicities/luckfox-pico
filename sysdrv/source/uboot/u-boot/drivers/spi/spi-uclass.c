@@ -4,6 +4,8 @@
  * SPDX-License-Identifier:	GPL-2.0+
  */
 
+#define DEBUG
+
 #include <common.h>
 #include <dm.h>
 #include <errno.h>
@@ -257,6 +259,7 @@ int spi_find_chip_select(struct udevice *bus, int cs, struct udevice **devp)
 		return ret;
 	}
 
+	debug("Kay, bus: %s\n", bus->name);
 	for (device_find_first_child(bus, &dev); dev;
 	     device_find_next_child(&dev)) {
 		struct dm_spi_slave_platdata *plat;
