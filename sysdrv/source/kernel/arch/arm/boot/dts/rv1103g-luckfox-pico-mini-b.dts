@@ -56,6 +56,18 @@
     //     regulator-name = "gpio3_pa7";
     //     regulator-always-on;
     // };
+
+    // for u-boot
+	uboot-gpios {
+		compatible = "uboot-gpios";
+		u-boot,dm-pre-reloc;
+		status = "okay";
+
+		spi-cd = <&gpio1 RK_PD2 GPIO_ACTIVE_HIGH>;
+		spi-reset = <&gpio1 RK_PD3 GPIO_ACTIVE_HIGH>;
+		led-red = <&gpio3 RK_PA3 GPIO_ACTIVE_HIGH>;
+		led-green = <&gpio3 RK_PA4 GPIO_ACTIVE_HIGH>;
+	};
 };
 
 /**********GPIO**********/

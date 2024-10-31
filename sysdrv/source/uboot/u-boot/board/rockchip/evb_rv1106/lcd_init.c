@@ -13,19 +13,22 @@
  * SPDX-License-Identifier:	GPL-2.0+
  */
 
-#define DEBUG
 #include <common.h>
-#include <spi.h>
 #include <asm/gpio.h>
+#include <spi.h>
 
-#define LCD_WIDTH          128
-#define LCD_HEIGHT         64
+#define LCD_WIDTH   128
+#define LCD_HEIGHT  64
 
-#define LCD_CD_CMD         0
-#define LCD_CD_DATA        1
+#define LCD_CD_CMD  0
+#define LCD_CD_DATA 1
 
-static struct spi_slave * SpiDev;
+#define LED_ON      0
+#define LED_OFF     1
+
+static struct spi_slave* SpiDev;
 static struct gpio_desc GpioLedRed;
+static struct gpio_desc GpioLedGreen;
 static struct gpio_desc GpioReset;
 static struct gpio_desc GpioCd;
 
@@ -34,8 +37,8 @@ void writeCmd(uint8_t cmd) {
         debug("writeCmd SpiDev == 0\n");
         return;
     }
-	dm_gpio_set_value(&GpioCd, LCD_CD_CMD);
-	spi_xfer(SpiDev, 8, &cmd, NULL, SPI_XFER_BEGIN | SPI_XFER_END);
+    dm_gpio_set_value(&GpioCd, LCD_CD_CMD);
+    spi_xfer(SpiDev, 8, &cmd, NULL, SPI_XFER_BEGIN | SPI_XFER_END);
 }
 
 void writeData(uint8_t data) {
@@ -43,10 +46,9 @@ void writeData(uint8_t data) {
         debug("writeData SpiDev == 0\n");
         return;
     }
-	dm_gpio_set_value(&GpioCd, LCD_CD_DATA);
-	spi_xfer(SpiDev, 8, &data, NULL, SPI_XFER_BEGIN | SPI_XFER_END);
+    dm_gpio_set_value(&GpioCd, LCD_CD_DATA);
+    spi_xfer(SpiDev, 8, &data, NULL, SPI_XFER_BEGIN | SPI_XFER_END);
 }
-
 
 static int lcdInit(void) {
     /* lcd init */
@@ -79,11 +81,10 @@ static int lcdInit(void) {
     return 0;
 }
 
-
 int32_t lcdReset(void) {
-	dm_gpio_set_value(&GpioReset, 0);
+    dm_gpio_set_value(&GpioReset, 0);
     udelay(50 * 1000);
-	dm_gpio_set_value(&GpioReset, 1);
+    dm_gpio_set_value(&GpioReset, 1);
     udelay(50 * 1000);
 
     lcdInit();
@@ -94,8 +95,7 @@ int32_t lcdReset(void) {
 static void lcdBrush(uint8_t* buf, uint32_t len) {
     if (SpiDev == 0) return;
 
-
-    for (int page = 0; page <= LCD_HEIGHT/8; page++) {
+    for (int page = 0; page < LCD_HEIGHT / 8; page++) {
         // setPageAddress
         writeCmd(0xB0 + (page & 0x0f));
 
@@ -103,65 +103,58 @@ static void lcdBrush(uint8_t* buf, uint32_t len) {
         writeCmd((2 & 0x0f) | 0x00);
         writeCmd((2 >> 4) | 0x10);
 
-        for (int col = 0; col <= LCD_WIDTH; col++) {
+        for (int col = 0; col < LCD_WIDTH; col++) {
             writeData(buf[page * LCD_WIDTH + col]);
         }
     }
 }
 
+#include "lcd_logo.c"
 static int sh1106ShowLogo(void) {
-	lcdReset();
+    lcdReset();
 
-	uint8_t buf[LCD_WIDTH * LCD_HEIGHT / 8] = {0};
-	for (unsigned i = 0; i < sizeof(buf); i++) buf[i] = (uint8_t)i;
-	lcdBrush(buf, sizeof(buf));
+    lcdBrush(logoBuf, sizeof(logoBuf));
 
-	return 0;
+    return 0;
 }
 
 int lcd_init(void) {
-	debug("Kay, uboot lcd_init 33\n");
-	int ret;
+    printf("uboot oled\n");
+    int ret;
 
-	/* gpios */
-	debug("gd->fdt_blob: %p\n", gd->fdt_blob);
-	int node = fdt_node_offset_by_compatible(gd->fdt_blob, 0, "oled-gpios");
-	if (node < 0) {
-		printf("oled-gpios not found: %d\n", node);
-		return node;
-	}
-	ret = gpio_request_by_name_nodev(offset_to_ofnode(node), "led-red-gpios", 0, &GpioLedRed, GPIOD_IS_OUT);
-	// if (ret < 0) {
-	// 	printf("Failed to request led-red-gpios: %d\n", ret);
-	// 	return ret;
-	// }
-	gpio_request_by_name_nodev(offset_to_ofnode(node), "spi-reset-gpios", 0, &GpioReset, GPIOD_IS_OUT);
-	gpio_request_by_name_nodev(offset_to_ofnode(node), "spi-cd-gpios", 0, &GpioCd, GPIOD_IS_OUT);
+    /* spi */
+    struct udevice* bus;
+    ret = spi_get_bus_and_cs(0, 0, 10 * 1000 * 1000, 0, "spi_generic_drv", "oled_sh1106", &bus, &SpiDev);
+    // SpiDev = spi_setup_slave(0, 0, 10 * 1000 * 1000, 0);
+    if (!SpiDev) {
+        printf("%s: Failed to set up slave\n", __func__);
+        return -1;
+    }
 
-	for (int i = 0; i < 10; i++) {
-		dm_gpio_set_value(&GpioLedRed, 0);
-		udelay(50 * 1000);
-		dm_gpio_set_value(&GpioLedRed, 1);
-		udelay(50 * 1000);
-	}
+    ret = spi_claim_bus(SpiDev);
+    if (ret) {
+        printf("%s: Failed to claim SPI bus: %d\n", __func__, ret);
+        goto err_claim_bus;
+    }
 
-	/* spi */
-	SpiDev = spi_setup_slave(0, 0, 10 * 1000 * 1000, 0);
-	if (!SpiDev) {
-		debug("%s: Failed to set up slave\n", __func__);
-		return -1;
-	}
+    /* gpios */
+    ofnode node = ofnode_path("/uboot-gpios");
+    ret = gpio_request_by_name_nodev(node, "spi-reset", 0, &GpioReset, GPIOD_IS_OUT);
+    if (ret < 0) printf("Failed to request spi-reset: %d\n", ret);
+    ret = gpio_request_by_name_nodev(node, "spi-cd", 0, &GpioCd, GPIOD_IS_OUT);
+    if (ret < 0) printf("Failed to request spi-cd: %d\n", ret);
+    ret = gpio_request_by_name_nodev(node, "led-red", 0, &GpioLedRed, GPIOD_IS_OUT);
+    if (ret < 0) printf("Failed to request led-red: %d\n", ret);
+    ret = gpio_request_by_name_nodev(node, "led-green", 0, &GpioLedGreen, GPIOD_IS_OUT);
+    if (ret < 0) printf("Failed to request led-green: %d\n", ret);
 
-	ret = spi_claim_bus(SpiDev);
-	if (ret) {
-		debug("%s: Failed to claim SPI bus: %d\n", __func__, ret);
-		goto err_claim_bus;
-	}
+    dm_gpio_set_value(&GpioLedRed, LED_OFF);
+    dm_gpio_set_value(&GpioLedGreen, LED_OFF);
 
-	sh1106ShowLogo();
+    sh1106ShowLogo();
 
-	return 0;
+    return 0;
 err_claim_bus:
-	spi_free_slave(SpiDev);
-	return -1;
+    spi_free_slave(SpiDev);
+    return -1;
 }
