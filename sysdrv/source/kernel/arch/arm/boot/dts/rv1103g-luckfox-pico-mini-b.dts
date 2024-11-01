@@ -34,28 +34,13 @@
         regulator-name = "gpio3_pa3";
         regulator-always-on;
     };
-    gpio3pa4:gpio3pa4 {
+    gpio3pa5:gpio3pa5 {
         compatible = "regulator-fixed";
         pinctrl-names = "default";
-        pinctrl-0 = <&gpio3_pa4>;
-        regulator-name = "gpio3_pa4";
+        pinctrl-0 = <&gpio3_pa5>;
+        regulator-name = "gpio3_pa5";
         regulator-always-on;
     };
-
-    // gpio3pa6:gpio3pa6 {
-    //     compatible = "regulator-fixed";
-    //     pinctrl-names = "default";
-    //     pinctrl-0 = <&gpio3_pa6>;
-    //     regulator-name = "gpio3_pa6";
-    //     regulator-always-on;
-    // };
-    // gpio3pa7:gpio3pa7 {
-    //     compatible = "regulator-fixed";
-    //     pinctrl-names = "default";
-    //     pinctrl-0 = <&gpio3_pa7>;
-    //     regulator-name = "gpio3_pa7";
-    //     regulator-always-on;
-    // };
 
     // for u-boot
 	uboot-gpios {
@@ -66,7 +51,7 @@
 		spi-cd = <&gpio1 RK_PD2 GPIO_ACTIVE_HIGH>;
 		spi-reset = <&gpio1 RK_PD3 GPIO_ACTIVE_HIGH>;
 		led-red = <&gpio3 RK_PA3 GPIO_ACTIVE_HIGH>;
-		led-green = <&gpio3 RK_PA4 GPIO_ACTIVE_HIGH>;
+		led-green = <&gpio3 RK_PA5 GPIO_ACTIVE_HIGH>;
 	};
 };
 
@@ -87,22 +72,11 @@
             rockchip,pins = <3 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
     	};
 	};
-    gpio3-pa4 {
-        gpio3_pa4:gpio3-pa4 {
-            rockchip,pins = <3 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
+    gpio3-pa5 {
+        gpio3_pa5:gpio3-pa5 {
+            rockchip,pins = <3 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
     	};
 	};
-
-    // gpio3-pa6 {
-    //     gpio3_pa6:gpio3-pa6 {
-    //         rockchip,pins = <3 RK_PA6 RK_FUNC_GPIO &pcfg_pull_none>;
-    // 	};
-	// };
-    // gpio3-pa7 {
-    //     gpio3_pa7:gpio3-pa7 {
-    //         rockchip,pins = <3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_none>;
-    // 	};
-	// };
 };
 
 /**********SFC**********/
@@ -169,10 +143,10 @@
 	status = "okay";
 };
 
-/* UART5_M0 for stc */
+/* UART5_M2 for stc */
 &uart5 {
 	status = "okay";
-	pinctrl-0 = <&uart5m0_xfer>;
+	pinctrl-0 = <&uart5m2_xfer>;
 };
 
 /**********PWM**********/

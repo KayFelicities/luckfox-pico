@@ -1,14 +1,13 @@
 #!/bin/bash
 
-FACTORY_DIR=/userdata/factory
+FACTORY_DIR=/factory
 SHARE_DIR=/userdata/share
 APP_DIR=/userdata/apps
 MODULE_DIR=/userdata/modules
 
-# first boot
-if [ -e /etc/init.d/S21appinit ]; then
-    [ -d $FACTORY_DIR/plan ] && cp -a $FACTORY_DIR/plan/ $SHARE_DIR/
-    rm -f /etc/init.d/S21appinit && reboot
+# factory copy
+if [ ! -d $APP_DIR ]; then
+    cp -a $FACTORY_DIR/* /
 fi
 
 # modules

@@ -113,7 +113,8 @@ static void lcdBrush(uint8_t* buf, uint32_t len) {
 static int sh1106ShowLogo(void) {
     lcdReset();
 
-    lcdBrush(logoBuf, sizeof(logoBuf));
+    // lcdBrush(logoBuf, sizeof(logoBuf));
+    lcdBrush(startingBuf, sizeof(startingBuf));
 
     return 0;
 }
