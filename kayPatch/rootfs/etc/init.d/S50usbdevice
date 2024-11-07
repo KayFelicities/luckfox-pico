@@ -30,7 +30,7 @@ USB_CONFIGS_DIR=${USB_CONFIGFS_DIR}/configs/${USB_SKELETON}
 # For VBUS_ALWAYS_ON usb otg is not support ums
 # Since the block to ums is always occupated by USB due to no disconneted state
 UMS_BLOCK=/userdata/ums_shared.img
-UMS_BLOCK_SIZE=150 #unit M
+UMS_BLOCK_SIZE=360 #unit M
 UMS_BLOCK_TYPE=fat
 UMS_BLOCK_AUTO_MOUNT=on
 UMS_BLOCK_MOUNT_DIR=/userdata/share
